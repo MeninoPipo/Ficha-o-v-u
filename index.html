@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#10121a">
+  <title>O Véu — Ficha de Personagem</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="app-header">
+    <div class="topbar">
+      <div class="brand">
+        <h1>O Véu</h1>
+        <span id="char-name" class="subtitle">Ficha de personagem</span>
+      </div>
+      <div class="topbar-actions">
+        <button id="btn-info" class="icon-btn" type="button" aria-label="Tabela de rolagem D20">
+          <span id="icon-info"></span>
+        </button>
+        <button id="btn-chars" class="btn-reset" type="button">
+          <span id="icon-chars"></span>
+          <span>Personagens</span>
+        </button>
+      </div>
+    </div>
+
+    <nav class="tabbar">
+      <button class="tab active" data-tab="ficha" type="button">
+        <span id="icon-tab-ficha"></span><span>Ficha</span>
+      </button>
+      <button class="tab" data-tab="equip" type="button">
+        <span id="icon-tab-equip"></span><span>Equipamento</span>
+      </button>
+      <button class="tab" data-tab="registro" type="button">
+        <span id="icon-tab-registro"></span><span>Registro</span>
+      </button>
+      <button class="tab" data-tab="anotacoes" type="button">
+        <span id="icon-tab-anotacoes"></span><span>Anotações</span>
+      </button>
+    </nav>
+  </header>
+
+  <main>
+
+    <section id="tab-ficha" class="tab-page active">
+
+      <section class="card" aria-labelledby="titulo-identidade">
+        <h2 id="titulo-identidade">Identidade</h2>
+        <div class="field">
+          <label for="nome">Nome</label>
+          <input type="text" id="nome" autocomplete="off" placeholder="Nome do personagem">
+        </div>
+        <div class="field">
+          <label for="classe">Classe</label>
+          <select id="classe"></select>
+          <p id="class-desc" class="class-desc"></p>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="titulo-atributos">
+        <h2 id="titulo-atributos">Atributos</h2>
+        <p class="attr-hint">Distribua os valores −2, −1, 0, +1 e +2 entre os cinco atributos, um valor cada.</p>
+        <div id="atributos"></div>
+      </section>
+
+      <section class="card" aria-labelledby="titulo-recursos">
+        <h2 id="titulo-recursos">Recursos</h2>
+
+        <div class="resource" data-resource="hp">
+          <div class="res-top">
+            <span class="res-label"><span id="icon-hp"></span><span>Vida</span></span>
+            <div class="res-control">
+              <button class="btn-step" type="button" data-res="hp" data-dir="-1" aria-label="Diminuir vida">−</button>
+              <input class="res-final" id="res-hp-current" type="number" min="0" value="0" data-res="hp" aria-label="Vida atual">
+              <button class="btn-step" type="button" data-res="hp" data-dir="1" aria-label="Aumentar vida">+</button>
+            </div>
+          </div>
+          <div class="res-sub" id="res-hp-sub">—</div>
+        </div>
+
+        <div class="resource" data-resource="stress">
+          <div class="res-top">
+            <span class="res-label"><span id="icon-stress"></span><span>Stress</span></span>
+            <div class="res-control">
+              <button class="btn-step" type="button" data-res="stress" data-dir="-1" aria-label="Diminuir stress">−</button>
+              <input class="res-final" id="res-stress-current" type="number" min="0" value="0" data-res="stress" aria-label="Stress atual">
+              <button class="btn-step" type="button" data-res="stress" data-dir="1" aria-label="Aumentar stress">+</button>
+            </div>
+          </div>
+          <div class="res-sub" id="res-stress-sub">—</div>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="titulo-habilidade">
+        <h2 id="titulo-habilidade">Habilidade</h2>
+        <p id="ability-choice" class="ability-choice"></p>
+        <div id="habilidades"></div>
+      </section>
+
+    </section>
+
+    <section id="tab-equip" class="tab-page">
+
+      <section class="card" aria-labelledby="titulo-armas">
+        <h2 id="titulo-armas">Armas</h2>
+        <div id="armas"></div>
+        <div class="picker-row">
+          <select id="weapon-picker" aria-label="Escolher arma"></select>
+          <button id="btn-add-weapon" class="btn-add-inline" type="button" disabled>Adicionar</button>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="titulo-itens">
+        <h2 id="titulo-itens">Itens</h2>
+        <div id="itens"></div>
+        <button id="btn-add-item" class="btn-add" type="button">+ Adicionar item</button>
+      </section>
+
+    </section>
+
+    <section id="tab-registro" class="tab-page">
+
+      <section class="card" aria-labelledby="titulo-npcs">
+        <h2 id="titulo-npcs">NPCs</h2>
+        <div id="npcs"></div>
+        <button id="btn-add-npc" class="btn-add" type="button">+ Adicionar NPC</button>
+      </section>
+
+      <section class="card" aria-labelledby="titulo-lugares">
+        <h2 id="titulo-lugares">Lugares</h2>
+        <div id="lugares"></div>
+        <button id="btn-add-lugar" class="btn-add" type="button">+ Adicionar lugar</button>
+      </section>
+
+    </section>
+
+    <section id="tab-anotacoes" class="tab-page">
+
+      <section class="card" aria-labelledby="titulo-anotacoes">
+        <h2 id="titulo-anotacoes">Anotações</h2>
+        <textarea id="anotacoes" placeholder="Pistas, nomes, objetivos, observações..."></textarea>
+      </section>
+
+    </section>
+
+  </main>
+
+  <div id="char-overlay" class="overlay hidden" role="dialog" aria-modal="true" aria-label="Personagens">
+    <div class="overlay-panel">
+      <h2>Personagens</h2>
+      <div id="char-list"></div>
+      <button id="btn-new-char" class="btn-primary" type="button">+ Novo personagem</button>
+      <button id="btn-reset" class="btn-ghost" type="button">Limpar ficha atual</button>
+      <button id="btn-close-chars" class="btn-ghost" type="button">Fechar</button>
+    </div>
+  </div>
+
+  <div id="info-overlay" class="overlay hidden" role="dialog" aria-modal="true" aria-label="Tabela de rolagem">
+    <div class="overlay-panel">
+      <h2>Rolagem de dados</h2>
+      <p class="info-hint">Resultados da rolagem do D20.</p>
+      <div id="dice-table"></div>
+      <button id="btn-close-info" class="btn-ghost" type="button">Fechar</button>
+    </div>
+  </div>
+
+  <div id="note-overlay" class="overlay hidden" role="dialog" aria-modal="true" aria-label="Nota">
+    <div class="overlay-panel">
+      <h2 id="note-title">Nova nota</h2>
+      <input type="text" id="note-name" autocomplete="off" placeholder="Nome">
+      <textarea id="note-text" rows="6" placeholder="Escreva aqui..."></textarea>
+      <button id="note-delete" class="btn-danger" type="button">Excluir</button>
+      <button id="note-save" class="btn-primary" type="button">Salvar</button>
+      <button id="note-cancel" class="btn-ghost" type="button">Cancelar</button>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
