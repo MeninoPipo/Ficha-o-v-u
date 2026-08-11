@@ -12,6 +12,7 @@ Ficha de personagem digital (single page, só navegador) para a One Shot de RPG 
 - Funciona em celular (prioridade) e computador.
 - Dados salvos automaticamente no navegador (localStorage).
 - Para rodar: abrir `C:\Users\pipel\o-veu\index.html` (ou servir a pasta).
+- **Publicado em** GitHub Pages: `https://MeninoPipo.github.io/Ficha-o-v-u/` (repo `MeninoPipo/Ficha-o-v-u`, branch `main`). Atualizar = `git add -A && git commit && git push`; o Pages publica em ~1 min. Dados continuam salvos por dispositivo (localStorage).
 
 ---
 
