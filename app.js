@@ -236,6 +236,25 @@
       STORE.activeId = STORE.characters[0].id;
     }
     state = activeChar().data;
+    normalizeWeapons();
+  }
+
+  function normalizeWeapons() {
+    if (!Array.isArray(state.weapons)) state.weapons = [];
+    var cat = DATA.weapons || [];
+    state.weapons.forEach(function (w) {
+      var match = null;
+      for (var i = 0; i < cat.length; i++) {
+        if (String(cat[i].name).trim().toLowerCase() === String(w.name).trim().toLowerCase()) {
+          match = cat[i];
+          break;
+        }
+      }
+      if (match) {
+        w.distance = match.distance;
+        w.fixed = true;
+      }
+    });
   }
 
   function $(id) {
@@ -347,7 +366,7 @@
     if (!cls || cls.initialHp == null) return;
     var hp = state.resources.hp;
     hp.max = cls.initialHp;
-    hp.current = Math.max(0, Math.min(hp.current, hp.max));
+    hp.current = cls.initialHp;
   }
 
   function grantClassItems(cls) {
