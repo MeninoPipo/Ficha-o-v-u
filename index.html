@@ -36,8 +36,17 @@
       <button class="tab" data-tab="registro" type="button">
         <span id="icon-tab-registro"></span><span>Registro</span>
       </button>
+      <button class="tab" data-tab="bestiario" type="button">
+        <span id="icon-tab-bestiario"></span><span>Bestiário</span>
+      </button>
       <button class="tab" data-tab="anotacoes" type="button">
         <span id="icon-tab-anotacoes"></span><span>Anotações</span>
+      </button>
+      <button class="tab" data-tab="mapa" type="button">
+        <span id="icon-tab-mapa"></span><span>Mapa</span>
+      </button>
+      <button class="tab" data-tab="mestre" type="button">
+        <span id="icon-tab-mestre"></span><span>Mestre</span>
       </button>
     </nav>
   </header>
@@ -136,11 +145,39 @@
 
     </section>
 
+    <section id="tab-bestiario" class="tab-page">
+
+      <section class="card" aria-labelledby="titulo-bestiario">
+        <h2 id="titulo-bestiario">Bestiário</h2>
+        <div id="monstros"></div>
+        <button id="btn-add-monstro" class="btn-add" type="button">+ Adicionar monstro</button>
+      </section>
+
+    </section>
+
     <section id="tab-anotacoes" class="tab-page">
 
       <section class="card" aria-labelledby="titulo-anotacoes">
         <h2 id="titulo-anotacoes">Anotações</h2>
         <textarea id="anotacoes" placeholder="Pistas, nomes, objetivos, observações..."></textarea>
+      </section>
+
+    </section>
+
+    <section id="tab-mapa" class="tab-page">
+
+      <section class="card" aria-labelledby="titulo-mapa">
+        <h2 id="titulo-mapa">Mapa da Cidade do Véu</h2>
+        <img class="map-img" src="mapa-cidade-veu.png" alt="Mapa da cidade do Véu">
+      </section>
+
+    </section>
+
+    <section id="tab-mestre" class="tab-page">
+
+      <section class="card" aria-labelledby="titulo-mestre">
+        <h2 id="titulo-mestre">Área do Mestre</h2>
+        <p class="placeholder" id="mestre-placeholder">Área reservada do Mestre. O conteúdo será adicionado em breve.</p>
       </section>
 
     </section>
@@ -174,6 +211,17 @@
       <button id="note-delete" class="btn-danger" type="button">Excluir</button>
       <button id="note-save" class="btn-primary" type="button">Salvar</button>
       <button id="note-cancel" class="btn-ghost" type="button">Cancelar</button>
+    </div>
+  </div>
+
+  <div id="pw-overlay" class="overlay hidden" role="dialog" aria-modal="true" aria-label="Senha do Mestre">
+    <div class="overlay-panel">
+      <h2>Área do Mestre</h2>
+      <p class="info-hint">Digite a senha do Mestre para acessar.</p>
+      <input type="password" id="pw-input" autocomplete="off" placeholder="Senha">
+      <p id="pw-error" class="pw-error hidden">Senha incorreta.</p>
+      <button id="pw-enter" class="btn-primary" type="button">Entrar</button>
+      <button id="pw-cancel" class="btn-ghost" type="button">Cancelar</button>
     </div>
   </div>
 

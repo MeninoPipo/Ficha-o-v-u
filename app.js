@@ -122,6 +122,44 @@
         "........o"
       ],
       palette: { "#": "#8b91a5", "o": "#e0655a" }
+    },
+    mapa: {
+      rows: [
+        "....#....",
+        "..#####..",
+        ".#######.",
+        ".#######.",
+        "..#####..",
+        "...###...",
+        "....#....",
+        "....#....",
+        "...#....."
+      ],
+      palette: { "#": "#d9a64b" }
+    },
+    monstro: {
+      rows: [
+        "...####...",
+        "..######..",
+        ".#..##..#.",
+        ".##.##.##.",
+        "..######..",
+        "..######..",
+        "...####...",
+        "....##...."
+      ],
+      palette: { "#": "#86a873" }
+    },
+    coroa: {
+      rows: [
+        "..#....#..",
+        ".########.",
+        ".########.",
+        "..######..",
+        "..######..",
+        "..######.."
+      ],
+      palette: { "#": "#d9a64b" }
     }
   };
 
@@ -149,6 +187,7 @@
       grantedItems: [],
       npcs: [],
       places: [],
+      monsters: [],
       notes: ""
     };
   }
@@ -322,6 +361,9 @@
     $("icon-tab-equip").appendChild(pixelIcon(ICONS.espada, 2));
     $("icon-tab-registro").appendChild(pixelIcon(ICONS.livro, 2));
     $("icon-tab-anotacoes").appendChild(pixelIcon(ICONS.lapis, 2));
+    $("icon-tab-mapa").appendChild(pixelIcon(ICONS.mapa, 2));
+    $("icon-tab-bestiario").appendChild(pixelIcon(ICONS.monstro, 2));
+    $("icon-tab-mestre").appendChild(pixelIcon(ICONS.coroa, 2));
   }
 
   function findClass(id) {
@@ -937,22 +979,84 @@
 
   var noteData = { type: "npc", index: -1 };
 
+  function noteList(type) {
+    if (type === "npc") return state.npcs;
+    if (type === "monstro") return state.monsters;
+    return state.places;
+  }
+
+  function monsterRow(m, i) {
+    var row = document.createElement("div");
+    row.className = "monster-row";
+    row.dataset.i = i;
+    row.setAttribute("role", "button");
+    row.tabIndex = 0;
+
+    var name = (m.name || "").trim() || "Monstro sem nome";
+    var preview = (m.info || "").trim() || "Sem informações";
+
+    row.innerHTML =
+      '<div class="note-item">' +
+        '<div class="note-item-txt">' +
+          '<div class="note-item-name">' + esc(name) + '</div>' +
+          '<div class="note-item-preview">' + esc(preview) + '</div>' +
+        '</div>' +
+        '<span class="note-chev">›</span>' +
+      '</div>';
+
+    return row;
+  }
+
+  function renderMonsters() {
+    var box = $("monstros");
+    box.innerHTML = "";
+
+    if (!state.monsters.length) {
+      box.appendChild(placeholder("Nenhum monstro registrado."));
+    }
+
+    state.monsters.forEach(function (m, i) {
+      box.appendChild(monsterRow(m, i));
+    });
+  }
+
+  function bindMonsters() {
+    var box = $("monstros");
+
+    box.addEventListener("click", function (e) {
+      var row = e.target.closest(".monster-row");
+      if (!row) return;
+      openNote("monstro", parseInt(row.dataset.i, 10));
+    });
+
+    box.addEventListener("keydown", function (e) {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      var row = e.target.closest(".monster-row");
+      if (!row) return;
+      e.preventDefault();
+      openNote("monstro", parseInt(row.dataset.i, 10));
+    });
+  }
+
   function openNote(type, index) {
     noteData.type = type;
     noteData.index = index;
 
     var isNew = index < 0;
     var item = null;
-    var list = type === "npc" ? state.npcs : state.places;
+    var list = noteList(type);
     if (!isNew) item = list[index];
 
-    var label = type === "npc" ? "NPC" : "Lugar";
+    var label = type === "npc" ? "NPC" : (type === "monstro" ? "Monstro" : "Lugar");
+    var noun = label.toLowerCase();
 
-    $("note-title").textContent = isNew ? "Novo " + label.toLowerCase() : "Editar " + label.toLowerCase();
-    $("note-name").placeholder = label === "NPC" ? "Nome do NPC" : "Nome do lugar";
-    $("note-text").placeholder = label === "NPC" ? "Informações sobre este NPC..." : "Anotações sobre este lugar...";
+    $("note-title").textContent = isNew ? "Novo " + noun : "Editar " + noun;
+    $("note-name").placeholder = label === "Lugar" ? "Nome do lugar" : "Nome do " + noun;
+    $("note-text").placeholder = label === "Lugar"
+      ? "Anotações sobre este lugar..."
+      : "Informações sobre este " + noun + "...";
     $("note-name").value = item ? item.name : "";
-    $("note-text").value = item ? (type === "npc" ? item.info : item.notes) : "";
+    $("note-text").value = item ? (type === "lugar" ? item.notes : item.info) : "";
 
     $("note-delete").classList.toggle("hidden", isNew);
 
@@ -963,28 +1067,26 @@
   function saveNote() {
     if (!Array.isArray(state.npcs)) state.npcs = [];
     if (!Array.isArray(state.places)) state.places = [];
+    if (!Array.isArray(state.monsters)) state.monsters = [];
 
     var name = $("note-name").value.trim();
     var text = $("note-text").value;
     var isNew = noteData.index < 0;
+    var list = noteList(noteData.type);
+    var textKey = noteData.type === "lugar" ? "notes" : "info";
 
-    if (noteData.type === "npc") {
-      if (isNew) {
-        state.npcs.push({ id: uid(), name: name, info: text });
-      } else {
-        var n = state.npcs[noteData.index];
-        if (n) { n.name = name; n.info = text; }
-      }
-      renderNpcs();
+    if (isNew) {
+      var item = { id: uid(), name: name };
+      item[textKey] = text;
+      list.push(item);
     } else {
-      if (isNew) {
-        state.places.push({ id: uid(), name: name, notes: text });
-      } else {
-        var p = state.places[noteData.index];
-        if (p) { p.name = name; p.notes = text; }
-      }
-      renderPlaces();
+      var it = list[noteData.index];
+      if (it) { it.name = name; it[textKey] = text; }
     }
+
+    if (noteData.type === "npc") renderNpcs();
+    else if (noteData.type === "monstro") renderMonsters();
+    else renderPlaces();
 
     save();
     closeNote();
@@ -992,16 +1094,16 @@
 
   function deleteNote() {
     if (noteData.index < 0) return;
-    var msg = noteData.type === "npc" ? "Excluir este NPC?" : "Excluir este lugar?";
+    var msg = noteData.type === "npc"
+      ? "Excluir este NPC?"
+      : (noteData.type === "monstro" ? "Excluir este monstro?" : "Excluir este lugar?");
     if (!confirm(msg)) return;
 
-    if (noteData.type === "npc") {
-      state.npcs.splice(noteData.index, 1);
-      renderNpcs();
-    } else {
-      state.places.splice(noteData.index, 1);
-      renderPlaces();
-    }
+    noteList(noteData.type).splice(noteData.index, 1);
+
+    if (noteData.type === "npc") renderNpcs();
+    else if (noteData.type === "monstro") renderMonsters();
+    else renderPlaces();
 
     save();
     closeNote();
@@ -1020,6 +1122,10 @@
       openNote("lugar", -1);
     });
 
+    $("btn-add-monstro").addEventListener("click", function () {
+      openNote("monstro", -1);
+    });
+
     $("note-save").addEventListener("click", saveNote);
     $("note-cancel").addEventListener("click", closeNote);
     $("note-delete").addEventListener("click", deleteNote);
@@ -1030,6 +1136,45 @@
 
     $("note-overlay").addEventListener("keydown", function (e) {
       if (e.key === "Escape") closeNote();
+    });
+  }
+
+  var mestreUnlocked = false;
+  var MESTRE_PASSWORD = "goiabinha";
+
+  function openPassword() {
+    $("pw-input").value = "";
+    $("pw-error").classList.add("hidden");
+    $("pw-overlay").classList.remove("hidden");
+    $("pw-input").focus();
+  }
+
+  function closePassword() {
+    $("pw-overlay").classList.add("hidden");
+  }
+
+  function bindMestre() {
+    $("pw-enter").addEventListener("click", function () {
+      if ($("pw-input").value === MESTRE_PASSWORD) {
+        mestreUnlocked = true;
+        closePassword();
+        switchTab("mestre");
+      } else {
+        $("pw-error").classList.remove("hidden");
+        $("pw-input").value = "";
+        $("pw-input").focus();
+      }
+    });
+
+    $("pw-cancel").addEventListener("click", closePassword);
+
+    $("pw-overlay").addEventListener("click", function (e) {
+      if (e.target === this) closePassword();
+    });
+
+    $("pw-input").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") $("pw-enter").click();
+      if (e.key === "Escape") closePassword();
     });
   }
 
@@ -1128,6 +1273,7 @@
     renderItems();
     renderNpcs();
     renderPlaces();
+    renderMonsters();
     updateCharName();
   }
 
@@ -1192,6 +1338,10 @@
 
     document.querySelectorAll(".tab").forEach(function (tab) {
       tab.addEventListener("click", function () {
+        if (tab.dataset.tab === "mestre" && !mestreUnlocked) {
+          openPassword();
+          return;
+        }
         switchTab(tab.dataset.tab);
       });
     });
@@ -1247,7 +1397,9 @@
     bindItems();
     bindNpcs();
     bindPlaces();
+    bindMonsters();
     bindNoteModal();
+    bindMestre();
     injectIcons();
     bindEvents();
     refreshAll();
