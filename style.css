@@ -601,6 +601,20 @@ textarea:focus {
   color: var(--muted);
 }
 
+.w-dist-txt {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  background: var(--card-2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--muted);
+  font-size: 16px;
+  cursor: default;
+}
+
 .qty {
   display: flex;
   flex-direction: column;

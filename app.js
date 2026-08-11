@@ -493,7 +493,6 @@
       var res = state.resources[key];
       var inp = $("res-" + key + "-current");
       inp.value = res.current;
-      if (key === "hp") inp.max = res.max;
 
       var suffix = key === "hp" ? "vida" : "estresse";
       $("res-" + key + "-sub").textContent =
@@ -508,12 +507,7 @@
         var dir = parseInt(btn.dataset.dir, 10);
         var res = state.resources[key];
         if (!res) return;
-        var next = res.current + dir;
-        if (key === "hp") {
-          res.current = Math.max(0, Math.min(res.max, next));
-        } else {
-          res.current = Math.max(0, next);
-        }
+        res.current = Math.max(0, res.current + dir);
         save();
         renderResources();
       });
@@ -524,12 +518,7 @@
         var key = inp.dataset.res;
         var res = state.resources[key];
         if (!res) return;
-        var raw = Math.floor(inp.valueAsNumber || 0);
-        if (key === "hp") {
-          res.current = Math.max(0, Math.min(res.max, raw));
-        } else {
-          res.current = Math.max(0, raw);
-        }
+        res.current = Math.max(0, Math.floor(inp.valueAsNumber || 0));
         inp.value = res.current;
         save();
         renderResources();
@@ -612,15 +601,17 @@
       return '<option value="' + esc(d) + '"' + (w.distance === d ? " selected" : "") + ">" + esc(d) + "</option>";
     }).join("");
 
+    var distHtml = w.fixed
+      ? '<span class="w-dist-txt">' + esc(w.distance || "") + '</span>'
+      : '<select class="w-dist">' + opts + '</select>';
+
     row.innerHTML =
-      '<div class="weapon-line1">' +
+      '<div class="weapon-line1">' + starSlot +
         '<input class="w-name" type="text" placeholder="Nome da arma" value="' + esc(w.name) + '">' +
         '<button class="btn-del" type="button" aria-label="Remover arma">×</button>' +
       '</div>' +
       '<div class="weapon-fields">' +
-        '<label class="wfield"><span>Distância</span>' +
-          '<select class="w-dist">' + opts + '</select>' +
-        '</label>' +
+        '<label class="wfield"><span>Distância</span>' + distHtml + '</label>' +
         '<label class="wfield"><span>Dano</span>' +
           '<input class="w-dmg" type="text" placeholder="1d6" value="' + esc(w.damage) + '">' +
         '</label>' +
@@ -1143,7 +1134,7 @@
       } else {
         var w = findWeapon(pick);
         if (w) {
-          state.weapons.push({ id: uid(), name: w.name, distance: w.distance, damage: w.damage });
+          state.weapons.push({ id: uid(), name: w.name, distance: w.distance, damage: w.damage, fixed: true });
         }
       }
       $("weapon-picker").value = "";
