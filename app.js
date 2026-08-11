@@ -253,6 +253,7 @@
       if (match) {
         w.distance = match.distance;
         w.fixed = true;
+        w.category = match.category;
       }
     });
   }
@@ -611,6 +612,19 @@
     }
   }
 
+  function improvisedWeapon(w) {
+    return !!(w && String(w.category || "").toLowerCase().indexOf("improvis") !== -1);
+  }
+
+  function starSlotEl(w) {
+    var span = document.createElement("span");
+    span.className = "w-star";
+    if (improvisedWeapon(w)) {
+      span.appendChild(pixelIcon(ICONS.estrela, 2));
+    }
+    return span;
+  }
+
   function weaponRow(w, i) {
     var row = document.createElement("div");
     row.className = "weapon-row";
@@ -625,7 +639,7 @@
       : '<select class="w-dist">' + opts + '</select>';
 
     row.innerHTML =
-      '<div class="weapon-line1">' + starSlot +
+      '<div class="weapon-line1">' +
         '<input class="w-name" type="text" placeholder="Nome da arma" value="' + esc(w.name) + '">' +
         '<button class="btn-del" type="button" aria-label="Remover arma">×</button>' +
       '</div>' +
@@ -635,6 +649,8 @@
           '<input class="w-dmg" type="text" placeholder="1d6" value="' + esc(w.damage) + '">' +
         '</label>' +
       '</div>';
+
+    row.querySelector(".weapon-line1").insertBefore(starSlotEl(w), row.querySelector(".weapon-line1").firstChild);
 
     return row;
   }
@@ -1153,7 +1169,7 @@
       } else {
         var w = findWeapon(pick);
         if (w) {
-          state.weapons.push({ id: uid(), name: w.name, distance: w.distance, damage: w.damage, fixed: true });
+          state.weapons.push({ id: uid(), name: w.name, distance: w.distance, damage: w.damage, fixed: true, category: w.category });
         }
       }
       $("weapon-picker").value = "";
